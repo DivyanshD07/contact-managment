@@ -1,44 +1,56 @@
 const asyncHandler = require("express-async-handler")
-
+const Contact = require("../models/contactModels")
 //@description get all contacts
 //@route Get /api/contacts
 //@access public
-const getContact = async (req, res) => {
-    res.status(200).json({message: "Get all contacts"})
-};
+const getContact = asyncHandler (async (req, res) => {
+    const contacts = await Contact.find();
+    res.status(200).json(contacts);
+});
 
 //@description get contact by id
 //@route Get /api/contacts/:id
 //@access public
-const getContactById = async (req,res) => {
+const getContactById = asyncHandler (async (req,res) => {
     res.status(200).json({message: `Get contact ${req.params.id}`})
-};
+});
 
 //@description create contact
 //@route Get /api/contacts
 //@access public
-const createContact = async (req, res) => {
+const createContact = asyncHandler ( async (req, res) => {
     console.log("The received details are: ", req.body);
     const { name, email, phoneNo } = req.body;
     if(!name || !email || !phoneNo) {
         res.status(400);
         throw new Error("All fields are mandatory!");
     }
-    res.status(200).json({message: "Create new Contact"})
-};
+    const contact = await Contact.create({
+        name,
+        email,
+        phoneNo,
+    })
+    res.status(201).json(contact);
+});
 
 //@description update contact by id
 //@route Get /api/contacts/:id
 //@access public
-const updateContact = async (req, res) => {
+const updateContact = asyncHandler ((req, res) => {
     res.status(200).json({message: `Update contact ${req.params.id}`})
-};
+});
 
 //@description delete contact by id
 //@route Get /api/contacts/:id
 //@access public
-const deleteContact = async (req, res) => {
-    res.status(200).json({message: `Delete contact ${req.params.id}`})
-};
+const deleteContact = asyncHandler (async (req, res) => {
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) {
+        res.status(404);
+        throw new Error("Contact not found");
+    }
+    await Contact.deleteOne();
+    res.status(200).json(contact);
+});
 
 module.exports = {getContact, getContactById, createContact, updateContact, deleteContact};
