@@ -62,7 +62,7 @@ const userLogin = asyncHandler(async (req, res) => {
             },
         },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "1m" }
+            { expiresIn: "30m" }
         );
         res.status(200).json({ accessToken });
     } else{
@@ -73,9 +73,9 @@ const userLogin = asyncHandler(async (req, res) => {
 
 //@description Current user
 //@route /api/users/current
-//@access public
+//@access private
 const userCurrent = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: "Current user information" })
+    res.json(req.user);
 });
 
 module.exports = { userRegister, userLogin, userCurrent };
